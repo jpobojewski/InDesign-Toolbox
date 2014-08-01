@@ -1,5 +1,5 @@
 //
-// Count Items
+// Count Selected Items
 // v 1.5
 // by John Pobojewski
 //
@@ -7,7 +7,7 @@
 //
 
 
-app.doScript (main, ScriptLanguage.JAVASCRIPT, undefined, UndoModes.entireScript, "Count Items");
+app.doScript (main, ScriptLanguage.JAVASCRIPT, undefined, UndoModes.entireScript, "Count Selected Items");
 
 function main(){
 	//Make certain that user interaction (display of dialogs, etc.) is turned on.
@@ -31,8 +31,24 @@ function run(){
 	var _sel = app.selection;
 
 	if (_sel.length > 0){
-		alert("You have " + _sel.length + " items selected.");
+		var myDialog = app.dialogs.add({name:"Count Selected Items", canCancel:false});
+		with(myDialog){
+			//Add a dialog column.
+			with(dialogColumns.add()){
+				with(borderPanels.add()){
+					staticTexts.add({staticLabel:"You have "});
+					with(dialogColumns.add()){
+						textEditboxes.add({editContents:_sel.length+""});
+					}
+					with(dialogColumns.add()){
+						staticTexts.add({staticLabel:" items selected."});
+					}
+				}
+			}
+		}
+		myDialog.show();
+		myDialog.destroy();	
 	} else {
 		alert("Please select some items to count.");
-	}
+	}	
 }
