@@ -20,7 +20,7 @@ function main(){
 	var ai = 0;
 	var null_cnt = 0;
 
-	temp += "Name,Width,Height,Overscaled?,Page Number,X Pos,Y Pos\n\n";
+	temp += "Name,Width,Height,Overscaled?,Page Number,X Pos,Y Pos,DPI\n\n";
 
 	for (var aa = 0; aa < _graphics.length; aa++){
 		var currLink = "";
@@ -64,61 +64,33 @@ function main(){
 
 
 		if ( currHScale > 100 || currVScale > 100){
-			if (isNull){
-				temp += ",***---,";
-			} else {
-				temp += ",******,";
-			}
+				temp += ",*,";
 		} else {
-			if ( isNull){
-				temp += ",-----," 
-			} 
+				temp += ",,";
 		}
 		
-		var x_dim = Math.round(_graphics[aa].geometricBounds[3]*100)/100;
-		var y_dim = Math.round(_graphics[aa].geometricBounds[0]*100)/100;	
+		var x_dim = Math.round(_graphics[aa].parent.geometricBounds[3]*100)/100;
+		var y_dim = Math.round(_graphics[aa].parent.geometricBounds[0]*100)/100;	
 		
 		if ( currHScale > 100 || currVScale > 100 || isNull){
-			temp += "pg: " +  _graphics[aa].parent.parent.name + ",x: " + x_dim + ",y: " + y_dim;
+			temp += _graphics[aa].parentPage.name + "," + x_dim + " ," + y_dim;
+		} else {
+			temp += _graphics[aa].parentPage.name + "," + x_dim + " ," + y_dim;	
 		}
-		temp += "\n";
 
+		temp += "," + _graphics[aa].effectivePpi + ",";
+		temp += "\n";
 	}
 
-	temp += "\n" + "________________________________________"+ "\n" + "\n";
-
-	if (eps > 0){
-		temp += "total eps files: " + eps+ "\n";
-		temp += "\n";
-	}
-	if (jpg > 0){
-		temp += "total jpg files: " + jpg+ "\n";
-		temp += "\n";
-	}
-	if (tif > 0){
-		temp += "total tif files: " + tif+ "\n";
-		temp += "\n";
-	}
-	if (psd > 0){
-		temp += "total psd files: " + psd+ "\n";
-		temp += "\n";
-	}
-	if (ai > 0){
-		temp += "total ai files: " + ai+ "\n";
-		temp += "\n";
-	}
+	temp += "\n";
 	if (null_cnt > 0){
-		temp += "total EMBEDDED files: " + null_cnt + "\n";
-		temp += "\n";
+		temp += "EMBEDDED: " + null_cnt + "\n";
 	}
-
-	temp += "________________________________________"+ "\n"+ "\n";
-
-	temp += "total graphics in document: " + _graphics.length;
+	temp += "TOTAL: " + _graphics.length;
 
 	myFolder = Folder.selectDialog ("Export Images List");
 
-	fn = app.activeDocument.name.split('.')[0] + ".csv";
+	fn = app.activeDocument.name.split('.')[0] + "_links.csv";
 	fp = myFolder + "/" + fn;
 
 	var graphicsFile = new File(fp);
