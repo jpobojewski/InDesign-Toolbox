@@ -1,3 +1,4 @@
+
 //
 // Detail Typesetting
 // v 2.0
@@ -162,10 +163,12 @@ function scrubTypographyInString(str){
 
     //em dash
     str = str.replace(/(\w+) - (\w+)/g, "$1 \u2014 $2");
+    str = str.replace(/(\w+)  -  (\w+)/g, "$1 \u2014 $2");
     str = str.replace(/(\w+)--(\w+)/g, "$1 \u2014 $2");
     str = str.replace(/(\w+) -- (\w+)/g, "$1 \u2014 $2");
     str = str.replace(/(\w+)---(\w+)/g, "$1 \u2014 $2");
-	
+	str = str.replace(/(\w+) --- (\w+)/g, "$1 \u2014 $2");
+
     //ellipse
     str = str.replace(/\.\.\./g, "\u2026"); 
 	

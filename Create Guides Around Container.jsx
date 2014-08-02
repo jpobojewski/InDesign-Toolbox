@@ -1,12 +1,12 @@
 //
-// Create Guides in Container
+// Create Guides Around Container
 // v 1.0
 // by John Pobojewski, 2009
 //
 // Plots guides within a selected shape's perimeter
 //
 
-app.doScript (main, ScriptLanguage.JAVASCRIPT, undefined, UndoModes.entireScript, "Create Guides in Container");
+app.doScript (main, ScriptLanguage.JAVASCRIPT, undefined, UndoModes.entireScript, "Create Guides Around Container");
 
 function main(){
 	var _doc = app.activeDocument;
@@ -84,7 +84,7 @@ function drawGuide(myGuideLocation, myGuideOrientation){
 }
 
 function openDialog(){;
-	var dialog = app.dialogs.add({name:"Create Guides in Container"});
+	var dialog = app.dialogs.add({name:"Create Guides Around Container"});
 	var colorStrings = ["lightBlue",
 	"red",
 	"green", 
@@ -112,7 +112,7 @@ function openDialog(){;
 				with(dialogColumns.add()){
         		    with(borderPanels.add()){
 						staticTexts.add({staticLabel:"Rows:", minWidth:60});
-        		        var numRowsBox = realEditboxes.add({editValue:0});
+        		        var numRowsBox = realEditboxes.add({editValue:1});
         		        staticTexts.add({staticLabel:"Gutter:"});
         		        var rowGutterBox = realEditboxes.add({editValue:0.125});
 					}	
@@ -122,7 +122,7 @@ function openDialog(){;
 				with(dialogColumns.add()){
         		    with(borderPanels.add()){
 						staticTexts.add({staticLabel:"Columns:"});
-        		        var numColumnsBox = realEditboxes.add({editValue:0});
+        		        var numColumnsBox = realEditboxes.add({editValue:1});
         		        staticTexts.add({staticLabel:"Gutter:"});
         		        var columnGutterBox = realEditboxes.add({editValue:0.125});
 					}	
