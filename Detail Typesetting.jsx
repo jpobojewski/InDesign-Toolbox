@@ -70,6 +70,7 @@ function getDialog(){
 		} else {
 			checkSelection();
 		}
+		grepPrimeMarks();		
 
 		//Reset the find/change preferences before each search.
 		app.changeTextPreferences = NothingEnum.nothing;
@@ -77,6 +78,8 @@ function getDialog(){
 
 		//Remove the dialog from memory.
 		Dialog.destroy();
+
+		alert("Complete!");
 	}
 	else{
 		//Remove the dialog from memory.
@@ -90,9 +93,12 @@ function checkDocument(){
 	for (var i=0; i<_doc.pages.length; i++){
 		var _pg = _doc.pages[i];
 		for (var j=0; j<_pg.textFrames.length; j++){
-			_pg.textFrames[j].parentStory.contents = scrubTypographyInString(_pg.textFrames[j].parentStory.contents);
-			for (var p=0; p<_pg.textFrames[j].parentStory.paragraphs.length; p++){
-				scrubJustification(_pg.textFrames[j].parentStory.paragraphs.item(p));	
+			var s = _pg.textFrames[j].parentStory;
+
+			s.contents = scrubTypographyInString(s.contents);
+
+			for (var p=0; p<s.paragraphs.length; p++){
+				scrubJustification(s.paragraphs.item(p));	
 			}
 		}
 	}
@@ -135,7 +141,7 @@ function checkSelection(){
 				}
 				break;
 		}
-		newScrubPrimeMarks();
+		grepPrimeMarks();
 	}			
 }
 
@@ -170,58 +176,32 @@ function scrubTypographyInString(str){
     return str;
 }	
 
-function newScrubPrimeMarks(){
-	app.activeDocument.textPreferences.typographersQuotes = false;
+function grepPrimeMarks(){
+	if (CHECK_MEASUREMENTS){
+		//turn off smart quotes
+		app.activeDocument.textPreferences.typographersQuotes = false	
+		
+		app.findTextPreferences = NothingEnum.nothing;
+		app.changeTextPreferences = NothingEnum.nothing;
 
-	app.findGrepPreferences = NothingEnum.nothing;
-	app.changeGrepPreferences = NothingEnum.nothing;	
+		// singles
+		app.findGrepPreferences.findWhat = "([0-9]+)\u0022";
+		app.changeGrepPreferences.changeTo = "$1\u0022";
+		app.activeDocument.changeGrep();
 
-	app.changeGrepPreferences.changeTo = "$1'";
-	app.findGrepPreferences.findWhat = "(?<=d)[~\u201D~]]";
-	app.selection[0].changeGrep( );
+		// doubles
+		app.findGrepPreferences.findWhat = "([0-9]+)\u0027";
+		app.changeGrepPreferences.changeTo = "$1\u0027";
+		app.activeDocument.changeGrep();	
 
-	app.findGrepPreferences = NothingEnum.nothing;
-	app.changeGrepPreferences = NothingEnum.nothing;
+		app.findTextPreferences = NothingEnum.nothing;
+		app.changeTextPreferences = NothingEnum.nothing;
 
-	app.activeDocument.textPreferences.typographersQuotes = true;	
+		//turn on smart quotes
+		app.activeDocument.textPreferences.typographersQuotes = true;		
+	}
 }
 
-function scrubPrimeMarks(){
-	//find out the current document's Typographers Quote Preference
-	userOriginalQuotePreference = app.activeDocument.textPreferences.typographersQuotes
-
-	//turn off the Typographers preference
-	app.activeDocument.textPreferences.typographersQuotes = false
-	
-	//set Find/Change preferences to nothing, in case the user had left settings on a previous search
-	app.findTextPreferences = NothingEnum.nothing
-	app.changeTextPreferences = NothingEnum.nothing
-
-	//====================== PERFORM SEARCHES  ======================
-	//change left double quote into inch mark
-	app.findTextPreferences.findWhat = "\u201C"
-	app.changeTextPreferences.changeTo = "\u0022"
-	app.selection[0].changeText( )
-
-	//change right double quote into inch mark
-	app.findTextPreferences.findWhat = "\u201D"
-	app.changeTextPreferences.changeTo = "\u0022"
-	app.selection[0].changeText( )
-	
-	//change left single quote into foot mark
-	app.findTextPreferences.findWhat = "^9\u2018"
-	app.changeTextPreferences.changeTo = "^9\u0027"
-	app.selection[0].changeText( )
-	
-	//change right single quote into foot mark  
-	app.findTextPreferences.findWhat = "^9\u2019"
-	app.changeTextPreferences.changeTo = "^9\u0027"
-	app.selection[0].changeText( )
-
-	//reset Typographers Quote Preference back to the users original setting
-	app.activeDocument.textPreferences.typographersQuotes = userOriginalQuotePreference	
-
-}
 
 function scrubJustification( paragraph ){
 	if (CHECK_JUSTIFICATION){
